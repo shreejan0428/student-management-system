@@ -1,6 +1,5 @@
 # Student Management System
 
-![CI](https://github.com/YOUR_GITHUB_USERNAME/student-management-system/actions/workflows/ci.yml/badge.svg)
 
 A production-style REST API for managing students, courses, enrollments, grades, and administrative reports.
 
