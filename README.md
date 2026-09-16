@@ -110,15 +110,3 @@ The application reads database and port settings from environment variables:
 
 A straightforward AWS deployment is to run the Docker image on ECS/Fargate and use Amazon RDS for PostgreSQL. Do not put production passwords in source control.
 
-## Resume talking points
-
-Be prepared to explain:
-
-1. Why PostgreSQL instead of an in-memory database.
-2. Why Spring Boot and REST controllers.
-3. How JPA maps Java entities to relational tables.
-4. How database constraints prevent duplicate records.
-5. Why enrollment is transactional.
-6. How Docker makes the environment reproducible.
-7. How GitHub Actions validates changes before merging.
-8. What you would change for production: JWT/OAuth2, AWS Secrets Manager, migrations with Flyway, monitoring, pagination, and stronger concurrency controls.
