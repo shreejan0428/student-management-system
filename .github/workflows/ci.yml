@@ -1,33 +1,18 @@
-# This is a GitHub Actions "workflow" - a set of automated steps that
-# GitHub runs for us in the cloud every time we push code or open a
-# pull request. This is what "CI" (Continuous Integration) means in
-# practice: automatically checking that the project still builds and
-# all tests still pass, before code gets merged.
 name: CI
 
-# Run this workflow on every push and every pull request, against any
-# branch.
 on: [push, pull_request]
 
 jobs:
   test:
-    # Runs on a fresh, temporary Ubuntu virtual machine that GitHub
-    # provides for free for public repositories.
     runs-on: ubuntu-latest
+
     steps:
-      # Downloads our repository's code onto that virtual machine.
       - uses: actions/checkout@v4
 
-      # Installs the exact same Java version (21) that we use locally,
-      # and caches downloaded Maven dependencies between runs so later
-      # builds are faster.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
 
-      # Compiles the project and runs the full test suite. If any test
-      # fails, this step fails, and GitHub will show a red X on the
-      # commit/pull request so we know something is broken.
       - run: mvn -B test
