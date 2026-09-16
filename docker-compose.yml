@@ -1,0 +1,49 @@
+# Running "docker compose up --build" from this folder starts BOTH of
+# these services together: the PostgreSQL database and our Spring
+# Boot app, already wired up to talk to each other. This is the
+# fastest way to run the whole project with no local setup at all
+# (you don't even need Java or Maven installed on your machine).
+services:
+  # The PostgreSQL database itself.
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: studentdb
+      POSTGRES_USER: studentapp
+      POSTGRES_PASSWORD: studentpass
+    ports: ["5432:5432"]
+    # Stores the database's data outside the container, in a Docker
+    # "volume", so student/course/enrollment data survives even if you
+    # stop and restart the containers.
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    # Lets Docker Compose know when Postgres is actually ready to
+    # accept connections (not just "started"), so the "app" service
+    # below can wait for it properly instead of racing to connect too
+    # early.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studentapp -d studentdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Our Spring Boot application.
+  app:
+    # Builds the image using the Dockerfile in this same folder.
+    build: .
+    environment:
+      # Notice the hostname here is "postgres", not "localhost" - that's
+      # the service name above, and Docker Compose automatically lets
+      # containers reach each other by service name on their shared
+      # internal network.
+      DB_URL: jdbc:postgresql://postgres:5432/studentdb
+      DB_USERNAME: studentapp
+      DB_PASSWORD: studentpass
+    ports: ["8080:8080"]
+    # Don't start the app until Postgres has passed its healthcheck
+    # above, so we never try to connect before the database is ready.
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

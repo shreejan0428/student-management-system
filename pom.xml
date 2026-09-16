@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This is the Maven "Project Object Model" file - it tells Maven
+    (our build tool) which dependencies (libraries) our project needs,
+    which Java version to use, and how to package everything into a
+    runnable .jar file.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+      Inheriting from spring-boot-starter-parent gives us sensible
+      default versions for every Spring-related dependency below, so
+      we don't have to pick and manage a compatible version number for
+      each one ourselves.
+  -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.6</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>student-management-system</artifactId>
+  <version>1.0.0</version>
+  <name>student-management-system</name>
+  <description>Production-style student management REST API</description>
+
+  <properties>
+    <java.version>21</java.version>
+  </properties>
+
+  <dependencies>
+    <!-- Lets us build REST APIs (@RestController, @GetMapping, etc.)
+         and starts an embedded Tomcat web server automatically. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- Spring Data JPA + Hibernate, for turning our @Entity classes
+         (Student, Course, Enrollment, AppUser) into database tables
+         and rows without us writing raw SQL by hand. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <!-- Enables the @NotBlank, @Email, @Min, @Max, etc. validation
+         annotations we use on Student and Course. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <!-- Adds authentication/authorization support - see
+         config/SecurityConfig.java for how we configure it. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <!-- The actual JDBC driver that lets our Java code talk to a real
+         PostgreSQL database. "scope=runtime" means we only need this
+         when the application is actually running, not while compiling
+         our own code. -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Automatically generates the interactive Swagger UI page and
+         the underlying OpenAPI documentation for every REST endpoint
+         we write, just from our existing controller code. -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.8.13</version>
+    </dependency>
+
+    <!-- JUnit 5 and Mockito, used by every *Test.java class under
+         src/test/java. "scope=test" means these are only available
+         while running tests, not in the final packaged application. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Testing utilities specifically for Spring Security, in case we
+         want to write tests that simulate logged-in users later. -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- This plugin is what makes "mvn spring-boot:run" work, and
+           also packages our app into a single, self-contained,
+           runnable .jar file (with all dependencies bundled inside)
+           when we run "mvn package". -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>
