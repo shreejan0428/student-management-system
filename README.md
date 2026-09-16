@@ -1,21 +1,19 @@
 # Student Management System
 
+A REST API for managing students, courses, enrollments, grades, and administrative users.
 
-A production-style REST API for managing students, courses, enrollments, grades, and administrative reports.
+## Tech Stack
 
-## Tech stack
-
-- Java 21
-- Spring Boot
-- Spring Web / REST
-- Spring Data JPA + Hibernate
-- PostgreSQL
-- Spring Security (HTTP Basic + BCrypt)
-- Docker + Docker Compose
-- JUnit 5 + Mockito
-- OpenAPI / Swagger UI
-- GitHub Actions CI
-- AWS-ready configuration through environment variables
+* Java 21
+* Spring Boot
+* Spring Web / REST
+* Spring Data JPA + Hibernate
+* PostgreSQL
+* Spring Security
+* Docker + Docker Compose
+* JUnit 5 + Mockito
+* OpenAPI / Swagger UI
+* GitHub Actions
 
 ## Architecture
 
@@ -25,87 +23,100 @@ Client / Swagger UI
         v
 Spring Boot REST API
         |
-  Service Layer
+   Service Layer
         |
-JPA / Hibernate
+  JPA / Hibernate
         |
    PostgreSQL
 ```
 
 ## Features
 
-- CRUD operations for students and courses
-- Enrollment and grade management
-- Database uniqueness constraints and validation
-- Capacity checks for courses
-- Duplicate-enrollment protection
-- Transactional enrollment operations
-- Role-aware authenticated API users
-- Centralized API error responses
-- Swagger/OpenAPI documentation
-- Automated unit tests
-- Dockerized local development
-- CI pipeline with GitHub Actions
+* Student and course CRUD operations
+* Student enrollment and grade management
+* Course capacity validation
+* Duplicate-enrollment prevention
+* Database constraints and input validation
+* Transactional enrollment operations
+* Role-based API authentication
+* Centralized error handling
+* Swagger/OpenAPI API documentation
+* Automated unit tests
+* Dockerized PostgreSQL development environment
+* GitHub Actions CI pipeline
 
-## Run locally
+## Database Design
 
-Requirements: Java 21, Maven 3.9+, Docker Desktop.
+The application uses PostgreSQL with four primary tables:
 
-```bash
-mvn test
-mvn spring-boot:run
-```
+* `students`
+* `courses`
+* `enrollments`
+* `app_users`
 
-Or run the complete stack (app + PostgreSQL) with one command:
+Foreign keys maintain relationships between students, courses, and enrollments, while database constraints help prevent invalid and duplicate records.
+
+## Running the Application
+
+### Requirements
+
+* Java 21
+* Maven 3.9+
+* Docker Desktop
+
+### Start with Docker
 
 ```bash
 docker compose up --build
 ```
 
-API: http://localhost:8080
-Swagger UI: http://localhost:8080/swagger-ui.html
+The API will be available at:
 
-### Setup in VS Code (macOS)
+```text
+http://localhost:8080
+```
 
-1. Install prerequisites: `brew install openjdk@21 maven` and Docker Desktop.
-2. Open the project folder in VS Code and install the **Extension Pack for Java** and **Spring Boot Extension Pack** when prompted.
-3. Start PostgreSQL only, so you can run/debug the app from VS Code: `docker compose up postgres`.
-4. Open `StudentManagementApplication.java` and click **Run** (or **Debug**) above the `main` method, or press F5.
-5. Visit http://localhost:8080/swagger-ui.html to try the API.
+Swagger UI:
 
-Demo credentials:
+```text
+http://localhost:8080/swagger-ui.html
+```
 
-- `admin` / `admin123`
-- `staff` / `staff123`
+### Run Tests
 
-For a real deployment, change these seeded credentials and use environment/secret management instead of committing passwords.
+```bash
+mvn test
+```
 
-## Example API calls
+## Example API Requests
 
 ```bash
 curl -u admin:admin123 http://localhost:8080/api/students
 
 curl -u admin:admin123 http://localhost:8080/api/courses
 
-curl -u admin:admin123 -X POST http://localhost:8080/api/enrollments \\
-  -H 'Content-Type: application/json' \\
+curl -u admin:admin123 -X POST http://localhost:8080/api/enrollments \
+  -H 'Content-Type: application/json' \
   -d '{"studentId":1,"courseId":1}'
 
 curl -u admin:admin123 http://localhost:8080/api/enrollments/student/1
 ```
 
-## Database design
+## Authentication
 
-`students`, `courses`, `enrollments`, and `app_users` are connected with foreign keys and uniqueness constraints. The enrollment table prevents a student from being enrolled in the same course twice.
+The application uses Spring Security with HTTP Basic authentication and BCrypt password hashing.
 
-## AWS deployment
+Demo accounts are provided for local development:
 
-The application reads database and port settings from environment variables:
+* `admin`
+* `staff`
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `PORT`
+Production deployments should use securely managed credentials rather than the demo accounts.
 
-A straightforward AWS deployment is to run the Docker image on ECS/Fargate and use Amazon RDS for PostgreSQL. Do not put production passwords in source control.
+## CI/CD
 
+GitHub Actions automatically builds and tests the application to help catch errors before changes are merged.
+
+## Future Deployment
+
+The application is configured to support environment-based database and port configuration, making it suitable for deployment with services such as AWS ECS/Fargate and Amazon RDS for PostgreSQL.
